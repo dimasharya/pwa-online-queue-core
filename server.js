@@ -8,8 +8,8 @@ const authConfig = require("./utils/auth_config.json");
 
 const app = express();
 
-const port = process.env.PORT || 3001;
-const appPort = process.env.SERVER_PORT || 3000;
+const port = process.env.PORT || 3000;
+const appPort = process.env.SERVER_PORT || 3001;
 const appOrigin = authConfig.appOrigin || `http://localhost:${appPort}`;
 const serviceAccount = require("./utils/antrianonline-5bd8a-firebase-adminsdk-lwvey-2d22dbceb9.json");
 const bodyParser = require("body-parser");

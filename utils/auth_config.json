@@ -1,5 +1,5 @@
 {
   "domain": "dev-rrkw03ki.us.auth0.com",
   "clientId": "gOgPzZRqTrUJXdg08v1oGgmGVaqP6l7g",
-  "audience": "http://localhost:3001"
+  "audience": "http://localhost:3000"
 }
