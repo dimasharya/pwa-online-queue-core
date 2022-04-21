@@ -65,6 +65,8 @@ app.get("/api/external", checkJwt, (req, res) => {
   });
 });
 
+app.get("/", (req, res) => res.send("API is Running"));
+
 // get all tenant
 
 app.get("/api/tenant", async (req, res) => {
