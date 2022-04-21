@@ -261,4 +261,4 @@ app.get("/api/cek", async (req, res) => {
   res.send(data);
 });
 
-app.listen(port, () => console.log(`API Server listening on port ${port}`));
+app.listen(appPort, () => console.log(`API Server listening on port ${appPort}`));
