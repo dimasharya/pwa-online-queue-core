@@ -44,7 +44,7 @@ if (
 //app.use(routes)
 app.use(morgan("dev"));
 app.use(helmet());
-app.use(cors({ origin: appOrigin }));
+app.use(cors());
 
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
