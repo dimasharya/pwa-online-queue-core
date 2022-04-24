@@ -248,7 +248,7 @@ app.get("/api/antrian/:userId/", async (req, res) => {
 app.post("/api/antrian/:tenantId", async (req, res) => {
   const data = req.body;
   const result = await db.collection("antrian").add(data);
-  res.send(result);
+  res.send(result.id);
 });
 
 app.get("/api/cek", async (req, res) => {
@@ -260,6 +260,8 @@ app.get("/api/cek", async (req, res) => {
   //const waktu_antri = firestore.Timestamp.fromDate(data.waktu_antri).toDate()
   res.send(data);
 });
+
+app.use("/api/tenant", require("./routes/api/Tenant"))
 
 app.listen(port, () => console.log(`API Server listening on port ${port}`));
 
