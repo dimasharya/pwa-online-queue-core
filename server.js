@@ -225,7 +225,7 @@ app.get("/api/antrian/:userId", async (req, res) => {
     .get();
   let data = [];
   snapshot.forEach((doc) => {
-    data.push(doc.data());
+    data.push({ tenantId: doc.id, data: doc.data() });
   });
   res.send(data);
 });
