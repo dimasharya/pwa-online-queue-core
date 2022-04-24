@@ -225,7 +225,7 @@ app.get("/api/antrian/:userId", async (req, res) => {
     .get();
   let data = [];
   snapshot.forEach((doc) => {
-    data.push({ tenantId: doc.id, data: doc.data() });
+    data.push({ antrianId: doc.id, data: doc.data() });
   });
   res.send(data);
 });
@@ -245,11 +245,19 @@ app.get("/api/antrian/:userId/", async (req, res) => {
   res.send(data);
 });
 
+// tambah antrian baru
 app.post("/api/antrian/:tenantId", async (req, res) => {
   const data = req.body;
   const result = await db.collection("antrian").add(data);
   res.send(result.id);
 });
+
+// cancel antrian
+app.put("/api/antrian/cancel", async (req, res) => {
+  const id = req.query.antrianId
+  const result = await db.collection("antrian").doc(id).update({status: "Dibatalkan"})
+  res.send("success")
+})
 
 app.get("/api/cek", async (req, res) => {
   const snapshot = await db
