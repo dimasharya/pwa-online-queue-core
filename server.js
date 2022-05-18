@@ -8,20 +8,15 @@ const authConfig = require("./utils/auth_config.json");
 
 const app = express();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 const appPort = process.env.SERVER_PORT || 3001;
 const appOrigin = authConfig.appOrigin || `http://localhost:${appPort}`;
 const serviceAccount = require("./utils/antrianonline-5bd8a-firebase-adminsdk-lwvey-2d22dbceb9.json");
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({ extended: true }));
 
-const {
-  initializeApp,
-  cert,
-} = require("firebase-admin/app");
-const {
-  getFirestore,
-} = require("firebase-admin/firestore");
+const { initializeApp, cert } = require("firebase-admin/app");
+const { getFirestore } = require("firebase-admin/firestore");
 
 initializeApp({
   credential: cert(serviceAccount),
@@ -235,7 +230,6 @@ app.get("/api/antrian/:userId", async (req, res) => {
 app.get("/api/antrian/:userId/", async (req, res) => {
   const snapshot = await db
     .collection("antrian")
-    .doc()
     .where("user_id", "==", req.params.userId)
     .get();
   let data = [];
@@ -254,10 +248,67 @@ app.post("/api/antrian/:tenantId", async (req, res) => {
 
 // cancel antrian
 app.put("/api/antrian/cancel", async (req, res) => {
-  const id = req.query.antrianId
-  const result = await db.collection("antrian").doc(id).update({status: "Dibatalkan"})
-  res.send("success")
-})
+  const id = req.query.antrianId;
+  const result = await db
+    .collection("antrian")
+    .doc(id)
+    .update({ status: "Dibatalkan" });
+  res.send("success");
+});
+
+// REKAM MEDIS
+// cek nomor rekam medis dengan email / user_id
+
+app.get("/api/rekam/:userId", async (req, res) => {
+  const snapshot = await db
+    .collection("rekam_medis")
+    .where("user_id", "==", req.params.userId)
+    .get();
+  let data;
+  snapshot.forEach((doc) => {
+    data = doc.data();
+  });
+  res.send(data);
+});
+
+// tambah data rekam medis baru
+
+app.post("/api/rekam/:userId", async (req, res) => {
+  const data = req.body
+  const snapshot = await db
+    .collection("rekam_medis")
+    .add(data)
+  res.send(snapshot.id);
+});
+
+// edit data rekam medis
+
+app.put("/api/rekam/:userId", async (req, res) => {
+  const data = req.body
+  let id;
+  const getId = await db.collection("rekam_medis").where("user_id", "==", req.params.userId).get()
+  getId.forEach((res) => id = res.id)
+  const snapshot = await db
+    .collection("rekam_medis")
+    .doc(id)
+    .update(data)
+  res.send(snapshot.id);
+});
+
+//get nomor rekam medis terakhir
+
+app.get("/api/rekamlast", async (req, res) => {
+  const snapshot = await db
+    .collection("rekam_medis")
+    .orderBy("nomor_rekam", "desc")
+    .limit(1)
+    .get();
+  let data;
+  snapshot.forEach((doc) => {
+    data = doc.data();
+  });
+  res.send(data);
+});
 
 app.get("/api/cek", async (req, res) => {
   const snapshot = await db
