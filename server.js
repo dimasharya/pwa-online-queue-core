@@ -88,7 +88,7 @@ app.get("/api/antrian/lastactive", async (req, res) => {
   const from = req.query.date;
   const besok = new Date(req.query.date);
   besok.setDate(besok.getDate() + 1);
-  const to = besok.toString();
+  const to = besok.toISOString().slice(0, 10);
   const snapshot = await db
     .collection("antrian")
     .where("tenant_id", "==", req.query.id)
@@ -111,7 +111,7 @@ app.get("/api/antrian/activenow", async (req, res) => {
   const from = req.query.date;
   const besok = new Date(req.query.date);
   besok.setDate(besok.getDate() + 1);
-  const to = besok.toString();
+  const to = besok.toISOString().slice(0, 10);
   const snapshot = await db
     .collection("antrian")
     .where("tenant_id", "==", req.query.id)
@@ -133,7 +133,7 @@ app.get("/api/antrian/all", async (req, res) => {
   const from = req.query.date;
   const besok = new Date(req.query.date);
   besok.setDate(besok.getDate() + 1);
-  const to = besok.toString();
+  const to = besok.toISOString().slice(0, 10);
   const snapshot = await db
     .collection("antrian")
     .where("tenant_id", "==", req.query.id)
@@ -153,7 +153,7 @@ app.get("/api/antrian/last", async (req, res) => {
   const from = req.query.date;
   const besok = new Date(req.query.date);
   besok.setDate(besok.getDate() + 1);
-  const to = besok.toString();
+  const to = besok.toISOString().slice(0, 10);
   const snapshot = await db
     .collection("antrian")
     .where("tenant_id", "==", req.query.id)
@@ -173,7 +173,7 @@ app.get("/api/antrian/selesai", async (req, res) => {
   const from = req.query.date;
   const besok = new Date(req.query.date);
   besok.setDate(besok.getDate() + 1);
-  const to = besok.toString();
+  const to = besok.toISOString().slice(0, 10);
   const snapshot = await db
     .collection("antrian")
     .where("tenant_id", "==", req.query.id)
@@ -194,7 +194,7 @@ app.get("/api/antrian/exist", async (req, res) => {
   const from = req.query.date;
   const besok = new Date(req.query.date);
   besok.setDate(besok.getDate() + 1);
-  const to = besok.toString();
+  const to = besok.toISOString().slice(0, 10);
   const snapshot = await db
     .collection("antrian")
     .where("tenant_id", "==", req.query.id)
