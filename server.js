@@ -82,6 +82,79 @@ app.get("/api/tenant/:id", async (req, res) => {
   res.send(data);
 });
 
+// get antrian yang status lagi antri
+app.get("/api/antrian/allantri", async (req, res) => {
+  const from = req.query.date;
+  const besok = new Date(req.query.date);
+  besok.setDate(besok.getDate() + 1);
+  const to = besok.toISOString().slice(0, 10);
+  const snapshot = await db
+    .collection("antrian")
+    .where("tenant_id", "==", req.query.id)
+    .where("tanggal", ">=", from)
+    .where("tanggal", "<", to)
+    .where("status", "==", req.query.status)
+    .orderBy("tanggal", "desc")
+    .get();
+  let data = [];
+  snapshot.forEach((doc) => {
+    data.push(doc.data());
+  });
+  res.send(data);
+});
+
+// get id antrian pertama
+
+app.get("/api/antrian/first", async (req, res) => {
+  const from = req.query.date;
+  const besok = new Date(req.query.date);
+  besok.setDate(besok.getDate() + 1);
+  const to = besok.toISOString().slice(0, 10);
+  const snapshot = await db
+    .collection("antrian")
+    .where("tenant_id", "==", req.query.id)
+    .where("tanggal", ">=", from)
+    .where("tanggal", "<", to)
+    .where("status", "==", req.query.status)
+    .orderBy("tanggal", "desc")
+    .limit(1)
+    .get();
+  let data;
+  snapshot.forEach((doc) => {
+    data = doc.id;
+  });
+  res.send(data);
+});
+
+// set edit next antrian
+
+app.put("/api/antrian/firstedit/:idAntrian", async (req, res) => {
+  const id = req.params.idAntrian;
+  try {
+    const snapshot = await db
+      .collection("antrian")
+      .doc(id)
+      .update({ status: "Aktif" });
+    res.send("success");
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// set antrian ditangani
+app.put("/api/antrian/ditangani/:idAntrian", async (req, res) => {
+  const id = req.params.idAntrian;
+  try {
+    const snapshot = await db
+      .collection("antrian")
+      .doc(id)
+      .update({ status: "Selesai" });
+    res.send("success");
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 // get queue by id tenant and date (active) (the last queue)
 
 app.get("/api/antrian/lastactive", async (req, res) => {
@@ -122,7 +195,7 @@ app.get("/api/antrian/activenow", async (req, res) => {
     .get();
   let data = [];
   snapshot.forEach((doc) => {
-    data.push(doc.data());
+    data.push({ id: doc.id, data: doc.data() });
   });
   res.send(data);
 });
@@ -242,8 +315,12 @@ app.get("/api/antrian/:userId/", async (req, res) => {
 // tambah antrian baru
 app.post("/api/antrian/:tenantId", async (req, res) => {
   const data = req.body;
-  const result = await db.collection("antrian").add(data);
-  res.send(result.id);
+  try {
+    const result = await db.collection("antrian").add(data);
+    return res.send("success");
+  } catch (error) {
+    return res.send(error)
+  }
 });
 
 // cancel antrian
@@ -274,24 +351,22 @@ app.get("/api/rekam/:userId", async (req, res) => {
 // tambah data rekam medis baru
 
 app.post("/api/rekam/:userId", async (req, res) => {
-  const data = req.body
-  const snapshot = await db
-    .collection("rekam_medis")
-    .add(data)
+  const data = req.body;
+  const snapshot = await db.collection("rekam_medis").add(data);
   res.send(snapshot.id);
 });
 
 // edit data rekam medis
 
 app.put("/api/rekam/:userId", async (req, res) => {
-  const data = req.body
+  const data = req.body;
   let id;
-  const getId = await db.collection("rekam_medis").where("user_id", "==", req.params.userId).get()
-  getId.forEach((res) => id = res.id)
-  const snapshot = await db
+  const getId = await db
     .collection("rekam_medis")
-    .doc(id)
-    .update(data)
+    .where("user_id", "==", req.params.userId)
+    .get();
+  getId.forEach((res) => (id = res.id));
+  const snapshot = await db.collection("rekam_medis").doc(id).update(data);
   res.send(snapshot.id);
 });
 
